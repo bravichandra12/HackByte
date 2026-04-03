@@ -1,0 +1,128 @@
+/* Page Background */
+.register-page {
+  min-height: 100vh;
+  background: #F9FAFB;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card */
+.register-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 0;
+  width: 400px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  border: 1px solid #D1D5DB;
+}
+
+/* Title */
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.02em;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 2px solid #E5E7EB;
+  margin-bottom: 20px;
+}
+
+/* Each Tab */
+.tab {
+  padding: 10px;
+  cursor: pointer;
+  font-weight: 800;
+  color: #1F2937;
+  position: relative;
+  border: 1px solid #E5E7EB;
+  background: #F9FAFB;
+  border-radius: 0;
+  width: 50%;
+  text-align: center;
+}
+
+/* Active Tab */
+.tab.active {
+  color: #8B5CF6;
+  background: transparent;
+  border-color: transparent;
+}
+
+/* purple underline indicator */
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 18%;
+  width: 64%;
+  height: 3px;
+  background: #8B5CF6;
+}
+
+/* Form fields */
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.registration-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 800;
+  color: #111827;
+  gap: 6px;
+}
+
+.registration-form input,
+.registration-form select {
+  padding: 9px 10px;
+  border-radius: 0;
+  border: 1px solid #9CA3AF;
+  font-size: 14px;
+  color: #111827;
+  background: #FFFFFF;
+}
+
+.registration-form input:focus,
+.registration-form select:focus {
+  outline: 0;
+  border-color: #8B5CF6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+  color: #fff;
+  border: 1px solid #6D28D9;
+  border-radius: 0;
+  padding: 10px 18px;
+  font-weight: 800;
+  cursor: pointer;
+  width: fit-content;
+  align-self: center;
+  min-width: 140px;
+}
+
+.submit-button:hover {
+  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+  border-color: #5B21B6;
+}
+
+.submitted-data {
+  margin-top: 10px;
+  background-color: #F3F4F6;
+  color: #1F2937;
+  border-radius: 0;
+  border: 1px solid #D1D5DB;
+  padding: 10px;
+  font-size: 13px;
+  overflow-x: auto;
+}
