@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   role VARCHAR(20) NOT NULL CHECK (role IN ('student', 'caretaker')),
   email VARCHAR(255) NOT NULL UNIQUE,
+  roll_no VARCHAR(50) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   hostel VARCHAR(50) NOT NULL CHECK (hostel IN ('H4', 'H3', 'H1', 'Panini', 'Ma Saraswati')),
@@ -22,10 +23,10 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- 2. Simple test data
-INSERT INTO users (role, email, password_hash, name, hostel, phone)
+INSERT INTO users (role, email, roll_no, password_hash, name, hostel, phone)
 VALUES
-  ('student', 'alice@college.edu', '$2b$10$/lNP/CUx78RoDMoBFmWqbeji9CcfPhbSNjTWdWJFnDGKpf7pPgNli', 'Alice Johnson', 'H4', '9876543210'),
-  ('caretaker', 'bob@college.edu', '$2b$10$7cgXdP8iYcl16emzp5hMq.QPX/Fmp7r10TrlD8pyXvesNF64359YC', 'Bob Verma', 'Ma Saraswati', '9123456780')
+  ('student', 'alice@college.edu', 'alice', '$2b$10$/lNP/CUx78RoDMoBFmWqbeji9CcfPhbSNjTWdWJFnDGKpf7pPgNli', 'Alice Johnson', 'H4', '9876543210'),
+  ('caretaker', 'bob@college.edu', 'bob', '$2b$10$7cgXdP8iYcl16emzp5hMq.QPX/Fmp7r10TrlD8pyXvesNF64359YC', 'Bob Verma', 'Ma Saraswati', '9123456780')
 ON CONFLICT DO NOTHING;
 
 -- 3. Query for validation
@@ -71,6 +72,59 @@ CREATE TABLE IF NOT EXISTS attendance_otps (
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
+-- 8. Complaints
+CREATE TABLE IF NOT EXISTS complaints (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  complaint_type VARCHAR(20) NOT NULL CHECK (complaint_type IN ('electrical', 'plumbing', 'lan', 'carpenter', 'cleaning', 'insects', 'others')),
+  description TEXT NOT NULL,
+  location VARCHAR(200) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'open',
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS requests (
+  id SERIAL PRIMARY KEY,
+  sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  category VARCHAR(100) NOT NULL,
+  item_name VARCHAR(255) NOT NULL,
+  description TEXT,
+  image_url VARCHAR(500),
+  hostel VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'fulfilled', 'cancelled'))
+);
+
+CREATE TABLE IF NOT EXISTS responses (
+  id SERIAL PRIMARY KEY,
+  request_id INTEGER NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
+  responder_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  pickup_description TEXT NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined')),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(50) NOT NULL, -- 'request_created', 'response_received', 'response_accepted', etc.
+  message TEXT NOT NULL,
+  related_request_id INTEGER REFERENCES requests(id) ON DELETE CASCADE,
+  related_response_id INTEGER REFERENCES responses(id) ON DELETE CASCADE,
+  is_read BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS fines (
+  id SERIAL PRIMARY KEY,
+  caretaker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  student_email VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'cancelled')),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  paid_at TIMESTAMP WITH TIME ZONE
+);
 -- 5. Lost/found queries
 -- Create a post (lost or found) - example
 INSERT INTO lost_found_items

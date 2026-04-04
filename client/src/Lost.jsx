@@ -188,6 +188,38 @@ function Lost() {
     }
   };
 
+  const handleDelete = async (event, itemId) => {
+    event.stopPropagation();
+    setError(null);
+
+    if (!savedUser?.id) {
+      setError("Please login to delete this post.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/lostfound/${itemId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: savedUser.id }),
+      });
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("API returned non-JSON response. Is the server running on port 5000?");
+      }
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to delete post");
+      }
+
+      setItems((prev) => prev.filter((item) => item.id !== itemId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="lf-page">
       <div className="lf-shell">
@@ -247,7 +279,15 @@ function Lost() {
                       <span>{item.userName || "Anonymous"}</span>
                     )}
                   </p>
-                  {item.claimedByUsername ? (
+                  {savedUser?.id === item.userId ? (
+                    <button
+                      className="lf-button secondary lf-delete-button"
+                      type="button"
+                      onClick={(event) => handleDelete(event, item.id)}
+                    >
+                      Delete
+                    </button>
+                  ) : item.claimedByUsername ? (
                     <span className="lf-claimed">
                       Claimed by{" "}
                       <Link

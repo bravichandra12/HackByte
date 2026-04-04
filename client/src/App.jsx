@@ -1,8 +1,12 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Home";
 import Register from "./Register";
 import Login from "./Login";
+import ResourceSharing from "./ResourceSharing";
+import RequestForm from "./RequestForm";
+import ResponseSharing from "./ResponseSharing";
+import ApplyFine from "./ApplyFine";
 import LostandFound from "./LostandFound.jsx";
 import Lost from "./Lost.jsx";
 import Found from "./Found.jsx";
@@ -10,16 +14,27 @@ import LostFoundPost from "./LostFoundPost.jsx";
 import LostFoundDetail from "./LostFoundDetail.jsx";
 import Profile from "./Profile.jsx";
 import Attendance from "./Attendance.jsx";
+import AttendanceList from "./AttendanceList.jsx";
+import Complaint from "./Complaint.jsx";
+import ComplaintList from "./ComplaintList.jsx";
+
+function CaretakerRoute({ user, children }) {
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (user.role !== "caretaker") {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+}
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
+  const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const handleLogin = (userData) => {
     localStorage.setItem("user", JSON.stringify(userData));
@@ -42,6 +57,21 @@ function App() {
         <Route path="/lost-found/item/:id" element={<LostFoundDetail />} />
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/attendance" element={<Attendance user={user} />} />
+        <Route path="/attendance/today" element={<AttendanceList user={user} />} />
+        <Route path="/complaints" element={<Complaint user={user} />} />
+        <Route path="/complaints/list" element={<ComplaintList user={user} />} />
+        <Route path="/resources" element={<ResourceSharing user={user} />} />
+        <Route path="/resources/:mode" element={<ResourceSharing user={user} />} />
+        <Route path="/request" element={<RequestForm user={user} fullPage />} />
+        <Route path="/response" element={<ResponseSharing user={user} />} />
+        <Route
+          path="/apply-fine"
+          element={
+            <CaretakerRoute user={user}>
+              <ApplyFine user={user} />
+            </CaretakerRoute>
+          }
+        />
         <Route path="/register" element={<Register onLogin={handleLogin} />}/>
         <Route path="/login" element={<Login onLogin={handleLogin} />}/>
       </Routes>

@@ -196,6 +196,11 @@
   font-size: 12px;
 }
 
+.lf-delete-button {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
 .lf-claimed {
   font-size: 12px;
   color: var(--lf-muted);

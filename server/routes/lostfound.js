@@ -215,4 +215,29 @@ router.post("/:id/claim", upload.single("proof"), async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    const itemId = Number(req.params.id);
+    const userId = Number(req.body?.userId);
+
+    if (!itemId || !userId) {
+      return res.status(400).json({ error: "Invalid item or user" });
+    }
+
+    const result = await pool.query(
+      "DELETE FROM lost_found_items WHERE id = $1 AND user_id = $2 RETURNING id",
+      [itemId, userId]
+    );
+
+    if (!result.rows.length) {
+      return res.status(403).json({ error: "You can only delete your own post" });
+    }
+
+    return res.json({ success: true, id: result.rows[0].id });
+  } catch (error) {
+    console.error("Lost/found delete error", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;

@@ -2,6 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./LostFound.css";
 
+const getSavedUser = () => {
+  try {
+    const raw = localStorage.getItem("user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
 const tokenize = (text) =>
   String(text || "")
     .toLowerCase()
@@ -66,6 +75,7 @@ function Found() {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const savedUser = useMemo(getSavedUser, []);
 
   const visibleItems = useMemo(() => {
     const query = searchQuery.trim();
@@ -113,6 +123,38 @@ function Found() {
     loadItems();
   }, []);
 
+  const handleDelete = async (event, itemId) => {
+    event.stopPropagation();
+    setError(null);
+
+    if (!savedUser?.id) {
+      setError("Please login to delete this post.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/lostfound/${itemId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: savedUser.id }),
+      });
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("API returned non-JSON response. Is the server running on port 5000?");
+      }
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to delete post");
+      }
+
+      setItems((prev) => prev.filter((item) => item.id !== itemId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="lf-page">
       <div className="lf-shell">
@@ -158,20 +200,31 @@ function Found() {
                 onClick={() => navigate(`/lost-found/item/${item.id}`)}
                 onKeyDown={(event) => handleCardKeyDown(event, item.id)}
               >
-                <p className="lf-user">
-                  Posted by{" "}
-                  {item.userUsername ? (
-                    <Link
-                      className="lf-user-link"
-                      to={`/profile/${item.userUsername}`}
-                      onClick={(event) => event.stopPropagation()}
+                <div className="lf-item-top">
+                  <p className="lf-user">
+                    Posted by{" "}
+                    {item.userUsername ? (
+                      <Link
+                        className="lf-user-link"
+                        to={`/profile/${item.userUsername}`}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {item.userName || item.userUsername}
+                      </Link>
+                    ) : (
+                      <span>{item.userName || "Anonymous"}</span>
+                    )}
+                  </p>
+                  {savedUser?.id === item.userId && (
+                    <button
+                      className="lf-button secondary lf-delete-button"
+                      type="button"
+                      onClick={(event) => handleDelete(event, item.id)}
                     >
-                      {item.userName || item.userUsername}
-                    </Link>
-                  ) : (
-                    <span>{item.userName || "Anonymous"}</span>
+                      Delete
+                    </button>
                   )}
-                </p>
+                </div>
                 <h4>{item.title}</h4>
                 <p>{item.description}</p>
                 <div className="lf-meta">

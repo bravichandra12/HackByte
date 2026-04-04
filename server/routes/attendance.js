@@ -194,4 +194,42 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+router.get("/today", async (req, res) => {
+  try {
+    const markedResult = await pool.query(
+      `SELECT DISTINCT u.name
+       FROM attendance a
+       JOIN users u ON u.id = a.user_id
+       WHERE a.attendance_date = CURRENT_DATE
+       ORDER BY u.name ASC`
+    );
+
+    const unmarkedResult = await pool.query(
+      `SELECT u.name
+       FROM users u
+       WHERE u.role = 'student'
+         AND NOT EXISTS (
+           SELECT 1
+           FROM attendance a
+           WHERE a.user_id = u.id
+             AND a.attendance_date = CURRENT_DATE
+         )
+       ORDER BY u.name ASC`
+    );
+
+    return res.json({
+      success: true,
+      markedNames: markedResult.rows.map((row) => row.name),
+      unmarkedNames: unmarkedResult.rows.map((row) => row.name),
+    });
+  } catch (error) {
+    console.error("Attendance today lookup error", error);
+    return res.status(500).json({ message: "Server error." });
+  }
+});
+
+router.use((req, res) => {
+  res.status(404).json({ message: "Attendance route not found" });
+});
+
 export default router;

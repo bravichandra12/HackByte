@@ -10,7 +10,7 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const VECTOR_DB_PATH = path.resolve(__dirname, "../data/vector_store/chroma.sqlite3");
+const VECTOR_DB_PATH = path.resolve(__dirname, "../data/data/vector_store/chroma.sqlite3");
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 const MAX_CHUNK_SIZE = 800;
 const CHUNK_OVERLAP = 120;

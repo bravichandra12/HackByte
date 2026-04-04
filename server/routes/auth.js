@@ -67,6 +67,11 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+    if (!normalizedEmail.endsWith("@iiitdmj.ac.in")) {
+      return res.status(400).json({ error: "Only IIITDMJ emails allowed" });
+    }
+
     if (password.length < 6) {
       return res.status(400).json({ error: "Password must be at least 6 characters" });
     }
@@ -77,13 +82,14 @@ router.post("/register", async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
+    const rollNo = normalizedEmail.split("@")[0];
     const insert = `
-      INSERT INTO users (role, email, password_hash, name, hostel, phone)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, role, email, name, hostel, phone, created_at
+      INSERT INTO users (role, email, roll_no, password_hash, name, hostel, phone)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id, role, email, roll_no, name, hostel, phone, created_at
     `;
 
-    const values = [role, email.trim(), passwordHash, name.trim(), hostel, phone.trim()];
+    const values = [role, normalizedEmail, rollNo, passwordHash, name.trim(), hostel, phone.trim()];
 
     const { rows } = await pool.query(insert, values);
     return res.status(201).json({ success: true, user: rows[0] });
@@ -103,8 +109,9 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const query = `SELECT id, role, email, name, hostel, phone, password_hash FROM users WHERE email=$1`;
-    const { rows } = await pool.query(query, [email.trim().toLowerCase()]);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const query = `SELECT id, role, email, roll_no, name, hostel, phone, password_hash FROM users WHERE email=$1`;
+    const { rows } = await pool.query(query, [normalizedEmail]);
 
     if (!rows.length) {
       return res.status(401).json({ error: "Invalid email or password" });
