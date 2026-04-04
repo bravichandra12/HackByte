@@ -7,6 +7,7 @@ function ComplaintList({ user }) {
   const [complaints, setComplaints] = useState([]);
   const [status, setStatus] = useState({ loading: false, error: null });
   const [activeType, setActiveType] = useState("all");
+  const [resolvingComplaintId, setResolvingComplaintId] = useState(null);
 
   const filteredComplaints = complaints.filter((complaint) => {
     if (activeType === "all") return true;
@@ -17,6 +18,54 @@ function ComplaintList({ user }) {
     const label = String(value || "").toLowerCase();
     if (!label) return "Unknown";
     return label.charAt(0).toUpperCase() + label.slice(1);
+  };
+
+  const getPriorityClassName = (label) => {
+    if (label === "High" || label === "P0 Emergency" || label === "P1 High") {
+      return "priority-chip priority-p0";
+    }
+    if (label === "Mid" || label === "P2 Medium") {
+      return "priority-chip priority-p2";
+    }
+    return "priority-chip priority-p3";
+  };
+
+  const handleResolveComplaint = async (complaintId) => {
+    if (!complaintId) {
+      alert("Invalid complaint id");
+      return;
+    }
+
+    const confirmed = window.confirm("Mark this complaint as resolved and delete it?");
+    if (!confirmed) return;
+
+    setResolvingComplaintId(complaintId);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/complaints/${complaintId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ caretakerId: user.id }),
+        }
+      );
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("Resolve API returned non-JSON response.");
+      }
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to resolve complaint");
+      }
+
+      setComplaints((prev) => prev.filter((item) => item.id !== complaintId));
+    } catch (error) {
+      alert(error.message || "Failed to resolve complaint");
+    } finally {
+      setResolvingComplaintId(null);
+    }
   };
 
   useEffect(() => {
@@ -125,20 +174,47 @@ function ComplaintList({ user }) {
         {!status.loading && !status.error && filteredComplaints.length > 0 && (
           <div className="lf-list">
             {filteredComplaints.map((complaint) => {
+              const complaintId = complaint.id ?? complaint.complaint_id;
               const createdAt = complaint.created_at
                 ? new Date(complaint.created_at).toLocaleString()
                 : "";
               return (
-                <article key={complaint.id} className="lf-item">
+                <article
+                  key={complaintId || `${complaint.student_name}-${createdAt}`}
+                  className="lf-item"
+                >
                   <div className="lf-item-top">
                     <h4>{complaint.student_name || "Student"}</h4>
-                    <span className="complaint-badge">{formatType(complaint.complaint_type)}</span>
+                    <div className="complaint-tags">
+                      <span
+                        className={getPriorityClassName(
+                          complaint.complexity_label || complaint.priority_label
+                        )}
+                      >
+                        {complaint.complexity_label || complaint.priority_label || "Low"}
+                      </span>
+                      <span className="complaint-badge">
+                        {formatType(complaint.complaint_type)}
+                      </span>
+                    </div>
                   </div>
                   <p>{complaint.description}</p>
                   <div className="lf-meta">
                     <span>{complaint.location}</span>
                     <span>{complaint.hostel}</span>
                     <span>{createdAt}</span>
+                  </div>
+                  <div className="complaint-actions">
+                    <button
+                      type="button"
+                      className="complaint-resolve-btn"
+                      disabled={!complaintId || resolvingComplaintId === complaintId}
+                      onClick={() => handleResolveComplaint(complaintId)}
+                    >
+                      {resolvingComplaintId === complaintId
+                        ? "Resolving..."
+                        : "Mark Resolved"}
+                    </button>
                   </div>
                 </article>
               );

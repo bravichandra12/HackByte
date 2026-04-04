@@ -10,6 +10,8 @@ import lostFoundRoutes from "./routes/lostfound.js";
 import attendanceRoutes from "./routes/attendance.js";
 import chatbotRoutes from "./routes/chatbot.js";
 import complaintRoutes from "./routes/complaints.js";
+import guestRoomRoutes from "./routes/guestRoom.js";
+import notificationsRoutes from "./routes/notifications.js";
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.use("/api/lostfound", lostFoundRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/complaints", complaintRoutes);
+app.use("/api/guest-room", guestRoomRoutes);
+app.use("/api/notifications", notificationsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server running...");

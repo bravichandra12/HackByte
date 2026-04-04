@@ -10,7 +10,8 @@ function Profile() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/auth/users/by-username/${username}`);
+        const endpoint = `http://localhost:5000/api/auth/users/by-username/${username}`;
+        const response = await fetch(endpoint);
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
           throw new Error("API returned non-JSON response.");
@@ -29,7 +30,7 @@ function Profile() {
   }, [username]);
 
   return (
-    <div className="lf-page">
+    <div className="lf-page profile-page">
       <div className="lf-shell">
         {error && <p className="lf-error">{error}</p>}
         {!error && !profile && <p className="lf-empty">Loading...</p>}

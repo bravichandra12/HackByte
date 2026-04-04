@@ -83,6 +83,32 @@ CREATE TABLE IF NOT EXISTS complaints (
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
+ALTER TABLE complaints
+ADD COLUMN IF NOT EXISTS priority_score INTEGER;
+
+ALTER TABLE complaints
+ADD COLUMN IF NOT EXISTS complexity_label VARCHAR(20);ll
+
+ALTER TABLE complaints
+ALTER COLUMN priority_score SET DEFAULT 0,
+ALTER COLUMN complexity_label SET DEFAULT 'Low';
+
+UPDATE complaints
+SET priority_score = COALESCE(priority_score, 0);
+
+UPDATE complaints
+SET complexity_label = CASE
+  WHEN complexity_label IN ('P0 Emergency', 'P1 High') THEN 'High'
+  WHEN complexity_label = 'P2 Medium' THEN 'Mid'
+  WHEN complexity_label = 'P3 Low' THEN 'Low'
+  WHEN complexity_label IS NULL OR trim(complexity_label) = '' THEN 'Low'
+  ELSE complexity_label
+END;
+
+ALTER TABLE complaints
+ALTER COLUMN priority_score SET NOT NULL,
+ALTER COLUMN complexity_label SET NOT NULL;
+
 CREATE TABLE IF NOT EXISTS requests (
   id SERIAL PRIMARY KEY,
   sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

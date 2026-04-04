@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ApplyFine({ user }) {
   const [rollNo, setRollNo] = useState("");
@@ -8,6 +9,8 @@ function ApplyFine({ user }) {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateForm = () => {
     if (!rollNo.trim() || !description.trim() || !amount.trim()) {
@@ -63,7 +66,9 @@ function ApplyFine({ user }) {
       );
 
       setSuccessMessage("✅ Fine applied successfully!");
+      alert("✅ Fine notification sent to the student!");
       resetForm();
+      navigate("/");
 
     } catch (error) {
       console.error("Error applying fine:", error);

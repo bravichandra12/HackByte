@@ -349,6 +349,74 @@
   gap: 10px;
 }
 
+/* Profile page */
+.profile-page {
+  background: radial-gradient(circle at top, rgba(37, 99, 235, 0.08), transparent 45%),
+    linear-gradient(160deg, #F8FAFC 0%, #EEF2FF 100%);
+  color: #0F172A;
+}
+
+.profile-page .lf-shell {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-page .lf-profile {
+  width: min(720px, 100%);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.12);
+  padding: 32px;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-page .lf-avatar {
+  border-radius: 0;
+  border-color: #CBD5F5;
+  background: #EEF2FF;
+  color: #4338CA;
+}
+
+.profile-page .lf-title {
+  font-size: 30px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.profile-page .lf-subtitle {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: #64748B;
+  margin-bottom: 18px;
+}
+
+.profile-page .lf-profile-grid {
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.profile-page .lf-profile-card {
+  border-radius: 0;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  text-align: left;
+}
+
+.profile-page .lf-detail-label {
+  color: #64748B;
+}
+
+.profile-page .lf-error,
+.profile-page .lf-empty {
+  text-align: center;
+  margin: 0 auto;
+}
+
 @media (max-width: 640px) {
   .lf-shell {
     padding: 28px 16px 60px;
@@ -356,5 +424,9 @@
 
   .lf-title {
     font-size: 28px;
+  }
+
+  .profile-page .lf-profile {
+    padding: 24px;
   }
 }

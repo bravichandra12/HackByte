@@ -150,16 +150,15 @@ router.post("/:id/respond", async (req, res) => {
     const request = requestResult.rows[0];
 
     // 3. 🔥 CREATE NOTIFICATION
+    const message = `${request.responder_name} has what you requested.\nPickup: ${pickupDescription}`;
+
     await pool.query(
-      `INSERT INTO notifications (user_id, type, message)
-       VALUES ($1, 'request_fulfilled',
-         'user_' || $2 || ' ' || $3 || ' has what you requested.' || E'\\nPickup: ' || $4
-       )`,
+      `INSERT INTO notifications (user_id, type, message, is_read)
+       VALUES ($1, $2, $3, false)`,
       [
         request.sender_id,
-        responderId,
-        request.responder_name,
-        pickupDescription
+        "request_fulfilled",
+        message
       ]
     );
 
@@ -196,9 +195,9 @@ router.put("/response/:id/accept", async (req, res) => {
     // Create notification for the sender
     const notifInsertSender = `
       INSERT INTO notifications (user_id, type, message, related_request_id, related_response_id)
-      VALUES ($1, 'request_fulfilled', 'user_' || $2 || ' ' || $3 || ' has what you requested.', $4, $5)
+      VALUES ($1, 'request_fulfilled', $2 || ' has what you requested.', $3, $4)
     `;
-    await pool.query(notifInsertSender, [request.sender_id, rows[0].responder_id, request.accepter_name, rows[0].request_id, responseId]);
+    await pool.query(notifInsertSender, [request.sender_id, request.accepter_name, rows[0].request_id, responseId]);
 
     res.json({ success: true, response: rows[0] });
   } catch (error) {
@@ -231,20 +230,19 @@ router.put("/:id/accept", async (req, res) => {
     const accepterName = userResult.rows[0].name;
 
     // Create notification for the sender
-   const notifInsert = `
-  INSERT INTO notifications (user_id, type, message, related_request_id)
-  VALUES ($1, 'request_fulfilled', 
-    'user_' || $2 || ' ' || $3 || ' has what you requested.' || E'\nPickup: ' || $5, 
-    $4
-  )
-`;
-   await pool.query(notifInsert, [
-  rows[0].sender_id,
-  accepterId,
-  accepterName,
-  requestId,
-  req.body.pickupDescription || "Check with responder"
-]);
+    const notifInsert = `
+      INSERT INTO notifications (user_id, type, message, related_request_id)
+      VALUES ($1, 'request_fulfilled', 
+        $2 || ' has what you requested.' || E'\nPickup: ' || $3, 
+        $4
+      )
+    `;
+    await pool.query(notifInsert, [
+      rows[0].sender_id,
+      accepterName,
+      req.body.pickupDescription || "Check with responder",
+      requestId
+    ]);
 
     res.json({ success: true, request: rows[0] });
   } catch (error) {

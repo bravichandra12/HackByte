@@ -33,8 +33,8 @@ router.post("/apply", async (req, res) => {
 
     // 🔥 FIND STUDENT USING ROLL NO
     const studentResult = await pool.query(
-      "SELECT id, email FROM users WHERE roll_no = $1 AND role = 'student'",
-      [rollNo.toLowerCase().trim()]
+      "SELECT id, email FROM users WHERE LOWER(roll_no) = LOWER($1) AND role = 'student'",
+      [rollNo.trim()]
     );
 
     if (studentResult.rows.length === 0) {
@@ -57,6 +57,15 @@ router.post("/apply", async (req, res) => {
       parseFloat(amount),
     ]);
 
+    await pool.query(
+      `INSERT INTO notifications (user_id, type, message)
+       VALUES ($1, 'fine', $2)`,
+      [
+        student.id,
+        `You have been fined ₹${amount} for: ${description}`,
+      ]
+    );
+
     res.json({
       success: true,
       message: "Fine applied successfully",
@@ -77,8 +86,8 @@ router.get("/student/:rollNo", async (req, res) => {
 
     // 🔥 Get student email from roll_no
     const userResult = await pool.query(
-      "SELECT email FROM users WHERE roll_no = $1",
-      [rollNo.toLowerCase()]
+      "SELECT email FROM users WHERE LOWER(roll_no) = LOWER($1)",
+      [rollNo]
     );
 
     if (userResult.rows.length === 0) {
@@ -121,7 +130,7 @@ router.get("/caretaker/:caretakerId", async (req, res) => {
     const query = `
       SELECT *
       FROM fines
-      WHERE caretaker_id = $1
+      WHERE caretaker_id = $1 AND status = 'pending'
       ORDER BY created_at DESC
     `;
 
