@@ -33,31 +33,55 @@ function ResourceSharing({ user }) {
   useEffect(() => {
     const loadUsernames = async () => {
       const ids = new Set();
+      const names = new Set();
       notifications.forEach((notification) => {
         const firstLine = (notification.message || "").split("\n")[0];
-        const match = firstLine.match(/^user_(\d+)\s+.+?\s+has what you requested\.$/);
-        if (match) {
-          ids.add(match[1]);
+        const withIdMatch = firstLine.match(/^user_(\d+)\s+(.+?)\s+has what you requested\.$/);
+        if (withIdMatch) {
+          ids.add(withIdMatch[1]);
+          return;
+        }
+
+        const plainMatch = firstLine.match(/^(.+?)\s+has what you requested\.$/);
+        if (plainMatch) {
+          names.add(plainMatch[1].trim().toLowerCase());
         }
       });
 
-      const idsToFetch = Array.from(ids).filter((id) => !userNameMap[id]);
-      if (!idsToFetch.length) {
+      const idsToFetch = Array.from(ids).filter((id) => !userNameMap[`id:${id}`]);
+      const namesToFetch = Array.from(names).filter((name) => !userNameMap[`name:${name}`]);
+      if (!idsToFetch.length && !namesToFetch.length) {
         return;
       }
 
       try {
-        const results = await Promise.all(
+        const idResults = await Promise.all(
           idsToFetch.map((id) => axios.get(`http://localhost:5000/api/auth/users/${id}`))
         );
 
+        const nameResults = await Promise.all(
+          namesToFetch.map((name) =>
+            axios
+              .get(`http://localhost:5000/api/auth/users/by-name/${encodeURIComponent(name)}`)
+              .catch(() => null)
+          )
+        );
+
         const nextMap = { ...userNameMap };
-        results.forEach((res) => {
+        idResults.forEach((res) => {
           const userData = res.data?.user;
           if (!userData?.id) return;
           const username = String(userData.email || "").split("@")[0] || String(userData.id);
-          nextMap[String(userData.id)] = username;
+          nextMap[`id:${String(userData.id)}`] = username;
         });
+
+        nameResults.forEach((res) => {
+          const userData = res?.data?.user;
+          if (!userData?.name || !userData?.email) return;
+          const username = String(userData.email || "").split("@")[0] || String(userData.id);
+          nextMap[`name:${String(userData.name).trim().toLowerCase()}`] = username;
+        });
+
         setUserNameMap(nextMap);
       } catch (error) {
         console.error("Error fetching user profiles:", error);
@@ -129,24 +153,43 @@ function ResourceSharing({ user }) {
               <p className="lf-empty">No accepted responses yet.</p>
             ) : (
               notifications.map((notification) => {
-                const firstLine = (notification.message || "").split("\n")[0];
+                const parts = (notification.message || "").split("\n");
+                const firstLine = parts[0] || "";
                 const match = firstLine.match(/^user_(\d+)\s+(.+?)\s+has what you requested\.$/);
-                let displayMessage = notification.message;
+                const plainMatch = firstLine.match(/^(.+?)\s+has what you requested\.$/);
+                let displayMessage = firstLine;
 
                 if (match) {
                   const [, userId, userName] = match;
-                  const username = userNameMap[userId] || userId;
+                  const username = userNameMap[`id:${userId}`];
                   displayMessage = (
                     <span>
-                      <Link className="lf-user-link" to={`/profile/${username}`}>
-                        {userName}
-                      </Link>
+                      {username ? (
+                        <Link className="lf-user-link" to={`/profile/${username}`}>
+                          {userName}
+                        </Link>
+                      ) : (
+                        userName
+                      )}
+                      {" has what you requested."}
+                    </span>
+                  );
+                } else if (plainMatch) {
+                  const plainName = plainMatch[1].trim();
+                  const username = userNameMap[`name:${plainName.toLowerCase()}`];
+                  displayMessage = (
+                    <span>
+                      {username ? (
+                        <Link className="lf-user-link" to={`/profile/${username}`}>
+                          {plainName}
+                        </Link>
+                      ) : (
+                        plainName
+                      )}
                       {" has what you requested."}
                     </span>
                   );
                 }
-
-                const parts = (notification.message || "").split("\n");
 
                 return (
                   <article key={notification.id} className="lf-item">

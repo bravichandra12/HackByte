@@ -38,6 +38,7 @@ const getMailer = () => {
 
 const buildOtpMessage = (otp) =>
   `Your Hostel Attendance OTP is ${otp}. It is valid for ${OTP_TTL_SECONDS} seconds.`;
+  
 
 router.post("/request-otp", async (req, res) => {
   const { userId, latitude, longitude, accuracy } = req.body;
@@ -76,6 +77,7 @@ router.post("/request-otp", async (req, res) => {
     }
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
+    console.log(`${otp}`);
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
     await pool.query("DELETE FROM attendance_otps WHERE user_id = $1", [userId]);
@@ -119,7 +121,7 @@ router.post("/request-otp", async (req, res) => {
 
 router.post("/verify-otp", async (req, res) => {
   const { userId, attemptId, otp } = req.body;
-
+    
   if (!userId || !attemptId || !otp) {
     return res.status(400).json({ message: "User, attempt id, and OTP are required." });
   }

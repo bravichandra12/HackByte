@@ -45,10 +45,7 @@
   margin-bottom: 40px;
   font-size: 2.5em;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #e2e8f0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -287,7 +284,7 @@
   margin: 0;
   font-size: 1.5em;
   font-weight: 700;
-  color: #ffd700;
+  color: #e2e8f0;
 }
 
 .close-btn {

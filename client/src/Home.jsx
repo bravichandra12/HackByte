@@ -80,7 +80,6 @@ function Home({ user, onLogout }) {
               )}
               {showDropdown && (
                 <div className="notification-dropdown">
-                  <h4>Notifications</h4>
                   {notifications.length === 0 ? (
                     <p>No notifications</p>
                   ) : (

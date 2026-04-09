@@ -78,9 +78,10 @@ function AttendanceList({ user }) {
       </div>
     );
   }
-
-  const todayLabel = new Date().toLocaleDateString();
-
+  const today = new Date();
+  const todayLabel = `${String(today.getDate()).padStart(2, "0")}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${today.getFullYear()}`;
   return (
     <div className="lf-page attendance-page">
       <div className="attendance-shell">

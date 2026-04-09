@@ -16,13 +16,40 @@ router.get("/users/by-username/:username", async (req, res) => {
     }
 
     const query = `
-      SELECT id, role, email, name, hostel, phone, created_at
+      SELECT id, role, email, roll_no AS room_no, name, hostel, phone, created_at
       FROM users
       WHERE split_part(lower(email), '@', 1) = $1
       LIMIT 1
     `;
 
     const { rows } = await pool.query(query, [username]);
+    if (!rows.length) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({ success: true, user: rows[0] });
+  } catch (error) {
+    console.error("User profile error", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/users/by-name/:name", async (req, res) => {
+  try {
+    const name = String(req.params.name || "").trim();
+    if (!name) {
+      return res.status(400).json({ error: "Invalid name" });
+    }
+
+    const query = `
+      SELECT id, role, email, roll_no AS room_no, name, hostel, phone, created_at
+      FROM users
+      WHERE lower(name) = lower($1)
+      ORDER BY id DESC
+      LIMIT 1
+    `;
+
+    const { rows } = await pool.query(query, [name]);
     if (!rows.length) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -42,7 +69,7 @@ router.get("/users/:id", async (req, res) => {
     }
 
     const query = `
-      SELECT id, role, email, name, hostel, phone, created_at
+      SELECT id, role, email, roll_no AS room_no, name, hostel, phone, created_at
       FROM users
       WHERE id = $1
     `;

@@ -25,6 +25,12 @@ body {
   padding: 20px;
 }
 
+.request-form {
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .request-form,
 .resource-selection-card,
 .option-card,
@@ -42,13 +48,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 28px;
+  min-height: 100vh;
+  margin-top: 0;
 }
 
-.request-form-fullpage .request-form {
+.request-form-modal {
+  width: min(560px, 100%);
+  min-height: auto;
   margin-top: 0;
-  width: 100%;
-  max-width: 500px;
+  padding: 26px;
 }
 
 .request-form h3 {
@@ -56,10 +65,7 @@ body {
   margin-bottom: 30px;
   font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-alt), #ffd64d);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #e2e8f0;
 }
 
 .form-group {

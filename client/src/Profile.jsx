@@ -30,7 +30,7 @@ function Profile() {
   }, [username]);
 
   return (
-    <div className="lf-page profile-page">
+    <div className="lf-page">
       <div className="lf-shell">
         {error && <p className="lf-error">{error}</p>}
         {!error && !profile && <p className="lf-empty">Loading...</p>}
@@ -54,6 +54,13 @@ function Profile() {
                 <p className="lf-detail-label">Hostel</p>
                 <p>{profile.hostel}</p>
               </div>
+
+              {profile.role === "student" && (
+                <div className="lf-profile-card">
+                  <p className="lf-detail-label">Room No.</p>
+                  <p>{profile.room_no || "Not set"}</p>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -86,9 +86,9 @@ setErrorMessage("");
     }
   };
 
-  return (
-    <div className={`request-form${fullPage ? " request-form-fullpage" : ""}`}>
-      {!fullPage && <h3>Request Resources</h3>}
+  const formContent = (
+    <>
+      <h3>Request Resources</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="title">What do you need? *</label>
@@ -166,6 +166,22 @@ setErrorMessage("");
 
         <button type="submit" className="btn-primary">Submit Request</button>
       </form>
+    </>
+  );
+
+  if (fullPage) {
+    return (
+      <div className="request-form-fullpage">
+        <div className="request-form request-form-modal">
+          {formContent}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="request-form">
+      {formContent}
     </div>
   );
 }

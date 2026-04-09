@@ -36,7 +36,7 @@ function CaretakerRoute({ user, children }) {
 
 function AppLayout({ user, onLogin, onLogout }) {
   const location = useLocation();
-  const hideSidebarPaths = new Set(["/login", "/register"]);
+  const hideSidebarPaths = new Set(["/login", "/register", "/resources/request", "/request"]);
   const showSidebar = Boolean(user) && !hideSidebarPaths.has(location.pathname);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

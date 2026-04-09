@@ -364,12 +364,33 @@ body {
   right: 0;
   top: 30px;
   width: 260px;
+  max-height: 460px;
+  overflow-y: auto;
   background: #1e293b;
   color: #FFFFFF;
   border-radius: 10px;
   padding: 10px;
   z-index: 100;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  scrollbar-width: thin;
+  scrollbar-color: #475569 #1e293b;
+}
+
+.notification-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notification-dropdown::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.notification-dropdown::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 8px;
+}
+
+.notification-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 .notification-item {
