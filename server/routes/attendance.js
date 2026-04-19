@@ -7,10 +7,10 @@ import pool from "../db.js";
 const router = express.Router();
 
 const HOSTEL_LOCATION = {
-  latitude: 23.1767,
-  longitude: 80.0247,
+  latitude: 23.176621479804552,
+  longitude: 80.01962910588388,
 };
-const RADIUS_METERS = 100;
+const RADIUS_METERS = 200;
 const OTP_TTL_SECONDS = 30;
 
 const maskEmail = (email) => {
@@ -47,7 +47,7 @@ router.post("/request-otp", async (req, res) => {
     return res.status(400).json({ message: "User ID and GPS location are required." });
   }
 
-  if (accuracy && accuracy > 150) {
+  if (accuracy && accuracy > 400) {
     return res.status(400).json({ message: "GPS accuracy is too low. Try again from an open area." });
   }
 
