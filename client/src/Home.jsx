@@ -63,7 +63,7 @@ function Home({ user, onLogout }) {
     <div className="app">
       {/* Navbar */}
       <nav className="navbar">
-        <h1 className="logo">THE HOSTEL</h1>
+        <h1 className="logo">HOSTELLE</h1>
         {user ? (
           <div className="nav-links">
             <div

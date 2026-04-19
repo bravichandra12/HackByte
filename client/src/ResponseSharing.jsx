@@ -149,7 +149,7 @@ function ResponseSharing({ user, onNotificationUpdate }) {
     return (
       <div className="resource-sharing">
         <nav className="navbar">
-          <h1 className="logo">THE HOSTEL</h1>
+          <h1 className="logo">Hostelle</h1>
           <Link to="/login" className="btn-primary">Login</Link>
         </nav>
         <div className="hero">
@@ -163,7 +163,7 @@ function ResponseSharing({ user, onNotificationUpdate }) {
     <div className="resource-sharing">
       {/* Navbar */}
       <nav className="navbar">
-        <h1 className="logo">THE HOSTEL</h1>
+        <h1 className="logo">Hostelle</h1>
         <div className="nav-links">
           <Link to="/" className="nav-link">Home</Link>
           <span className="user-info">Welcome, {user.name} ({user.hostel})</span>

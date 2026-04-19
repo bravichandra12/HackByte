@@ -56,7 +56,7 @@ function Attendance({ user }) {
       async (position) => {
         const { latitude, longitude, accuracy } = position.coords;
 
-        if (accuracy && accuracy > 150) {
+        if (accuracy && accuracy > 400) {
           setLoading(false);
           setStatusMessage(
             `Low GPS accuracy (~${Math.round(accuracy)}m). Please try again from an open area.`
