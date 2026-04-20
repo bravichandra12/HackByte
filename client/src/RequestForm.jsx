@@ -63,7 +63,7 @@ const [errorMessage, setErrorMessage] = useState("");
     }
 
     try {
-      await axios.post("http://localhost:5000/api/requests", formDataToSend, {
+      await axios.post("/api/requests", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data"
         }

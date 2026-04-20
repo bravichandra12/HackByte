@@ -35,7 +35,7 @@ function Home({ user, onLogout }) {
   const fetchNotifications = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/notifications/${user.id}`
+        `/api/notifications/${user.id}`
       );
       setNotifications(res.data.notifications);
     } catch (err) {
@@ -46,7 +46,7 @@ function Home({ user, onLogout }) {
   const markAsRead = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/api/notifications/read/${user.id}`
+        `/api/notifications/read/${user.id}`
       );
 
       setNotifications((prev) =>

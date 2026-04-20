@@ -17,7 +17,7 @@ function AttendanceList({ user }) {
     const loadAttendance = async () => {
       setStatus({ loading: true, error: null });
       try {
-        const response = await fetch("http://localhost:5000/api/attendance/today");
+        const response = await fetch("/api/attendance/today");
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
           throw new Error("Attendance API returned non-JSON response.");

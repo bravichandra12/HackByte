@@ -10,7 +10,7 @@ function Profile() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const endpoint = `http://localhost:5000/api/auth/users/by-username/${username}`;
+        const endpoint = `/api/auth/users/by-username/${username}`;
         const response = await fetch(endpoint);
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {

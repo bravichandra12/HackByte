@@ -24,7 +24,7 @@ function GuestRoomBooking({ user }) {
   const fetchAvailableRooms = async () => {
     try {
       console.log("Fetching rooms for hostel:", user.hostel);
-      const response = await fetch(`http://localhost:5000/api/guest-room/available?hostel=${user.hostel}`);
+      const response = await fetch(`/api/guest-room/available?hostel=${user.hostel}`);
       const data = await response.json();
       console.log("Available rooms response:", data);
       setAvailableRooms(data.availableCount);
@@ -97,7 +97,7 @@ function GuestRoomBooking({ user }) {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/guest-room/book", {
+      const response = await fetch("/api/guest-room/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

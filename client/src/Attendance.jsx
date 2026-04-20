@@ -14,7 +14,7 @@ function Attendance({ user }) {
 
   const requestOtp = async ({ latitude, longitude, accuracy }) => {
     try {
-      const response = await fetch("http://localhost:5000/api/attendance/request-otp", {
+      const response = await fetch("/api/attendance/request-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +92,7 @@ function Attendance({ user }) {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/attendance/verify-otp", {
+      const response = await fetch("/api/attendance/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

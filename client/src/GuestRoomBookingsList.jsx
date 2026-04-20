@@ -14,7 +14,7 @@ function GuestRoomBookingsList({ user }) {
 
   const fetchMyBookings = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/guest-room/my-bookings/${user.id}`);
+      const response = await fetch(`/api/guest-room/my-bookings/${user.id}`);
       const data = await response.json();
       setBookings(data.bookings);
     } catch (error) {

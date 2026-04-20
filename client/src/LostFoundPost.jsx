@@ -52,7 +52,7 @@ function LostFoundPost() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/lostfound", {
+      const response = await fetch("/api/lostfound", {
         method: "POST",
         body: payload,
       });
