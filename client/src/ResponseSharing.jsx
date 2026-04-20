@@ -30,7 +30,7 @@ function ResponseSharing({ user, onNotificationUpdate }) {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/requests`, {
+      const response = await axios.get(`/api/requests`, {
         params: {
           userId: user.id,
           userHostel: user.hostel,
@@ -86,7 +86,7 @@ function ResponseSharing({ user, onNotificationUpdate }) {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/requests/${selectedRequest.id}/respond`, {
+      await axios.post(`/api/requests/${selectedRequest.id}/respond`, {
         responderId: user.id,
         pickupDescription
       });
@@ -107,7 +107,7 @@ function ResponseSharing({ user, onNotificationUpdate }) {
 
   const handleDirectAccept = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/requests/${selectedRequest.id}/accept`, {
+      await axios.put(`/api/requests/${selectedRequest.id}/accept`, {
         accepterId: user.id
       });
       alert("Request accepted successfully!");
@@ -128,7 +128,7 @@ function ResponseSharing({ user, onNotificationUpdate }) {
   const handleDeleteRequest = async (requestId) => {
     if (window.confirm("Are you sure you want to delete this request?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/requests/${requestId}`, {
+        await axios.delete(`/api/requests/${requestId}`, {
           data: { userId: user.id }
         });
         fetchRequests();

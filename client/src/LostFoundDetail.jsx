@@ -10,7 +10,7 @@ function LostFoundDetail() {
   useEffect(() => {
     const loadItem = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/lostfound/${id}`);
+        const response = await fetch(`/api/lostfound/${id}`);
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
           throw new Error("API returned non-JSON response.");
@@ -61,7 +61,7 @@ function LostFoundDetail() {
               {item.imageUrl && (
                 <div className="lf-image-wrap">
                   <img
-                    src={item.imageUrl.startsWith("http") ? item.imageUrl : `http://localhost:5000${item.imageUrl}`}
+                    src={item.imageUrl.startsWith("http") ? item.imageUrl : `${item.imageUrl}`}
                     alt={item.title}
                   />
                 </div>

@@ -13,7 +13,7 @@ function FineList({ user }) {
     const fetchFines = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/fines/caretaker/${user.id}`
+          `/api/fines/caretaker/${user.id}`
         );
         setFines(res.data.fines);
       } catch (err) {
@@ -30,7 +30,7 @@ function FineList({ user }) {
   const markAsPaid = async (id) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/fines/${id}/mark-paid`
+        `/api/fines/${id}/mark-paid`
       );
 
       // ✅ remove from UI instantly

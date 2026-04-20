@@ -14,7 +14,7 @@ function ResourceSharing({ user }) {
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`http://localhost:5000/api/requests/notifications/${user.id}`);
+      const response = await axios.get(`/api/requests/notifications/${user.id}`);
       setNotifications(response.data.notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -56,13 +56,13 @@ function ResourceSharing({ user }) {
 
       try {
         const idResults = await Promise.all(
-          idsToFetch.map((id) => axios.get(`http://localhost:5000/api/auth/users/${id}`))
+          idsToFetch.map((id) => axios.get(`/api/auth/users/${id}`))
         );
 
         const nameResults = await Promise.all(
           namesToFetch.map((name) =>
             axios
-              .get(`http://localhost:5000/api/auth/users/by-name/${encodeURIComponent(name)}`)
+              .get(`/api/auth/users/by-name/${encodeURIComponent(name)}`)
               .catch(() => null)
           )
         );

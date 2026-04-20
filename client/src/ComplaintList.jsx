@@ -43,7 +43,7 @@ function ComplaintList({ user }) {
     setResolvingComplaintId(complaintId);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/complaints/${complaintId}`,
+        `/api/complaints/${complaintId}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ function ComplaintList({ user }) {
       setStatus({ loading: true, error: null });
       try {
         const response = await fetch(
-          `http://localhost:5000/api/complaints?userId=${user.id}`
+          `/api/complaints?userId=${user.id}`
         );
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
@@ -116,7 +116,7 @@ function ComplaintList({ user }) {
     const loadUsernames = async () => {
       try {
         const responses = await Promise.all(
-          idsToFetch.map((id) => fetch(`http://localhost:5000/api/auth/users/${id}`))
+          idsToFetch.map((id) => fetch(`/api/auth/users/${id}`))
         );
 
         const payloads = await Promise.all(

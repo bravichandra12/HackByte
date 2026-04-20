@@ -61,7 +61,7 @@ function ApplyFine({ user }) {
       console.log("REQUEST BODY:", requestBody);
 
       await axios.post(
-        "http://localhost:5000/api/fines/apply",
+        "/api/fines/apply",
         requestBody
       );
 

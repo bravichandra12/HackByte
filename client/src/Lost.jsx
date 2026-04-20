@@ -117,7 +117,7 @@ function Lost() {
   useEffect(() => {
     const loadItems = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/lostfound/found");
+        const response = await fetch("/api/lostfound/found");
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
           throw new Error("API returned non-JSON response. Is the server running on port 5000?");
@@ -166,7 +166,7 @@ function Lost() {
         payload.append("proof", claimFile);
       }
 
-      const response = await fetch(`http://localhost:5000/api/lostfound/${claimItem.id}/claim`, {
+      const response = await fetch(`/api/lostfound/${claimItem.id}/claim`, {
         method: "POST",
         body: payload,
       });
@@ -198,7 +198,7 @@ function Lost() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/lostfound/${itemId}`, {
+      const response = await fetch(`/api/lostfound/${itemId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: savedUser.id }),
